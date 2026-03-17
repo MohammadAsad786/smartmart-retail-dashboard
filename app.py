@@ -38,20 +38,23 @@ channel_df = run_query("SELECT * FROM CHANNEL_PERFORMANCE")
 # -----------------------------
 st.sidebar.header("🔍 Filters")
 
+# Region (Single select)
 selected_region = st.sidebar.selectbox(
     "Select Region",
     ["All"] + list(region_df["REGION"].unique())
 )
 
+# Channel (Single select)
 selected_channel = st.sidebar.selectbox(
     "Sales Channel",
     ["All"] + list(channel_df["SALES_CHANNEL"].unique())
 )
 
-# 🔥 RADIO BUTTON for Category
-selected_category = st.sidebar.radio(
+# 🔥 Category (Checkbox-style Multi Select)
+selected_categories = st.sidebar.multiselect(
     "Select Category",
-    ["All"] + list(category_df["CATEGORY"].unique())
+    options=list(category_df["CATEGORY"].unique()),
+    default=list(category_df["CATEGORY"].unique())  # all selected initially
 )
 
 # -----------------------------
@@ -63,8 +66,9 @@ if selected_region != "All":
 if selected_channel != "All":
     channel_df = channel_df[channel_df["SALES_CHANNEL"] == selected_channel]
 
-if selected_category != "All":
-    category_df = category_df[category_df["CATEGORY"] == selected_category]
+# Multi-select filter
+if selected_categories:
+    category_df = category_df[category_df["CATEGORY"].isin(selected_categories)]
 
 # -----------------------------
 # KPI Section
@@ -80,7 +84,7 @@ col3.metric("🛍 Channels", channel_df["SALES_CHANNEL"].nunique())
 st.divider()
 
 # -----------------------------
-# Charts Section
+# Charts
 # -----------------------------
 col1, col2 = st.columns(2)
 
@@ -108,7 +112,7 @@ with col4:
     st.bar_chart(products_df.set_index("PRODUCT_NAME")["TOTAL_REVENUE"])
 
 # -----------------------------
-# Explore Data Section (Like your UI)
+# Explore Data Section
 # -----------------------------
 st.divider()
 
@@ -116,8 +120,7 @@ st.subheader("📊 Explore Data")
 
 table_option = st.selectbox(
     "Select Table",
-    ["Region Revenue", "Monthly Sales", "Category Revenue", "Top Products"],
-    index=0
+    ["Region Revenue", "Monthly Sales", "Category Revenue", "Top Products"]
 )
 
 if table_option == "Region Revenue":
