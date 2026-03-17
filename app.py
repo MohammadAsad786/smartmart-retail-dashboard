@@ -4,9 +4,9 @@ import snowflake.connector
 
 # Snowflake connection
 conn = snowflake.connector.connect(
-    user="YOUR_USERNAME",
-    password="YOUR_PASSWORD",
-    account="YOUR_ACCOUNT_IDENTIFIER",
+    user=st.secrets["SNOWFLAKE_USER"],
+    password=st.secrets["SNOWFLAKE_PASSWORD"],
+    account=st.secrets["SNOWFLAKE_ACCOUNT"],
     warehouse="RETAIL_WH",
     database="RETAIL_DB",
     schema="RETAIL_SCHEMA"
